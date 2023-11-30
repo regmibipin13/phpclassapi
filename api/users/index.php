@@ -3,26 +3,31 @@
 include './../../config/db.php';
 include './../../config/app.php';
 
-$sql = "SELECT * from users";
+if (isset($_GET) && isset($_GET['token']) && checkToken($_GET['token'])) {
 
-$results = mysqli_query($connection, $sql);
+    $sql = "SELECT * from users";
 
-if ($results) {
-    $users = [];
-    while ($row = mysqli_fetch_assoc($results)) {
+    $results = mysqli_query($connection, $sql);
 
-        // Getting Roles
-        $role_id = $row['role_id'];
-        $sql2 = "SELECT * from roles where id = '$role_id'";
-        $results2 = mysqli_query($connection, $sql2);
-        $row['role'] = mysqli_fetch_assoc($results2);
-        // Getting Roles ends
+    if ($results) {
+        $users = [];
+        while ($row = mysqli_fetch_assoc($results)) {
 
-        $users[] = $row;
+            // Getting Roles
+            $role_id = $row['role_id'];
+            $sql2 = "SELECT * from roles where id = '$role_id'";
+            $results2 = mysqli_query($connection, $sql2);
+            $row['role'] = mysqli_fetch_assoc($results2);
+            // Getting Roles ends
+
+            $users[] = $row;
+        }
+
+        $successResponse['data'] = $users;
+        echo json_encode($successResponse);
+    } else {
+        echo json_encode($errorResponse);
     }
-
-    $successResponse['data'] = $users;
-    echo json_encode($successResponse);
 } else {
-    echo json_encode($errorResponse);
+    echo json_encode($tokenError);
 }

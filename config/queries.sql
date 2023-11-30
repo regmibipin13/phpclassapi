@@ -20,3 +20,11 @@ alter table users add column role_id int;
 alter table users add constraint fk_role_id foreign key(role_id) references roles(id);
 
 
+create table if not exists user_tokens(
+    id int primary key auto_increment,
+    user_id int,
+    token varchar(100),
+    foreign key(user_id) references users(id)
+);
+
+
